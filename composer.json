@@ -11,5 +11,7 @@
     ],
     "require": {},
     "require-dev": {
+        "pestphp/pest": "^1.21",
+        "spatie/pest-plugin-snapshots": "^1.1"
     }
 }
