@@ -15,6 +15,8 @@ $confix_file = array_shift($args);
 
 {
 
+    if ( $confix_file === '-' ) { $confix_file = 'php://stdin'; }
+    
     $confix = Yaml::parse( file_get_contents( $confix_file ) );
     $resources = $confix['resources'];
 
