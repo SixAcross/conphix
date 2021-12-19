@@ -32,7 +32,7 @@ it( 'accepts intent input on stdin when passed a dash as the input file argument
             'cat '. __DIR__ .'/../../examples/person1.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         
-        expect($exit_code )->toBeEmpty();
+        expect($exit_code)->toBe(0);
     }
   );
     
@@ -42,8 +42,8 @@ it( 'produces intent output on stdout when passed a dash as the input file argum
             'cat '. __DIR__ .'/../../examples/person1.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         
-        expect($exit_code )->toBeEmpty();
-        expect($stderr    )->toBeEmpty();
+        expect($exit_code)->toBe(0);
+        expect($stderr   )->toBe('');
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
@@ -67,7 +67,7 @@ it( 'writes extant values to intent resources where those keys already appear in
             'cat '. __DIR__ .'/../../examples/person1.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         expect($exit_code)->toBe(0);
-        expect($stderr)->toBe('');
+        expect($stderr   )->toBe('');
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
@@ -78,7 +78,7 @@ it( 'does not write extant values to intent resources where those resources or k
             'cat '. __DIR__ .'/../../examples/person1.nocontent.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         expect($exit_code)->toBe(0);
-        expect($stderr)->toBe('');
+        expect($stderr   )->toBe('');
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
