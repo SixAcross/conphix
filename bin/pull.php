@@ -11,6 +11,13 @@ require_once __DIR__ .'/../vendor/autoload.php';
 $args = (array) $argv;
 
 array_shift($args); #__FILE__
+
+$options['--all-values'] = false;
+if ( reset($args) === '--all-values' ) {
+    array_shift($args);
+    $options['--all-values'] = true;
+}   
+
 $confix_file = array_shift($args);
 
 {
@@ -22,13 +29,18 @@ $confix_file = array_shift($args);
 
     $recurse = function( array $extant_array, array &$intent_array ) use ( &$recurse, $options ) {
 
-        $keys = array_keys( $intent_array );
+        if ( $options['--all-values'] ) { 
+            $keys = array_keys( $extant_array );
+        } else {
+            $keys = array_keys( $intent_array );
+        }
         
         foreach( $keys as $key ) {
           
             if ( is_array($extant_array[$key] ?? null) and 
                 (   
-                    is_array($intent_array[$key]) 
+                    is_array($intent_array[$key]) or
+                    $options['--all-values']
                   )
               ) {
                 return $recurse( $extant_array[$key], $intent_array[$key] );
