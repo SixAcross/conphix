@@ -1,4 +1,7 @@
 
 resources:
     - uri: http://localhost:2011/api/v1/people/1.json
+      content:
+          values:
+              id: 
       
