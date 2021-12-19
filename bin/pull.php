@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace SixAcross\Confix\Tests;
 
 use Symfony\Component\Yaml\Yaml;
+use WpOrg\Requests\Requests;
 
 require_once __DIR__ .'/../vendor/autoload.php';
 
@@ -18,14 +19,25 @@ $confix_file = array_shift($args);
     $resources = $confix['resources'];
 
     foreach ( $resources as $resource_index => $resource ) {
+      
+        $response = Requests::get( $resource['uri'] );
+        
         $content = json_decode( 
-            file_get_contents( $resource['uri'] ),
+            $response->body,
             true,
             512,
             JSON_THROW_ON_ERROR
           );
 
         $confix['resources'][$resource_index]['content'] = $content;
+        
+        $extant = [
+            'status'  => $response->status_code,
+            'content' => $content,
+            'headers' => $response->headers->getAll(),
+          ];
+        
+        
     }
     
     echo Yaml::dump($confix);
