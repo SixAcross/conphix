@@ -9,7 +9,9 @@
             "email": "nato@confix.6ax.org"
         }
     ],
-    "require": {},
+    "require": {
+        "rmccue/requests": "^2.0"
+    },
     "require-dev": {
         "pestphp/pest": "^1.21",
         "spatie/pest-plugin-snapshots": "^1.1"
