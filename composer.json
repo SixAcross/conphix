@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "rmccue/requests": "^2.0"
+        "rmccue/requests": "^2.0",
+        "mtdowling/jmespath.php": "^2.6"
     },
     "require-dev": {
         "pestphp/pest": "^1.21",
