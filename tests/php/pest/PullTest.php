@@ -5,30 +5,9 @@ namespace SixAcross\Confix\Tests;
 use Symfony\Component\Yaml\Yaml;
 
 
-$exec_for_outputs = function( string $command ) {
-
-        $process = proc_open(
-            $command,
-            [ [ 'pipe', 'r' ], [ 'pipe', 'w' ], [ 'pipe', 'w' ] ],
-            $pipes
-          );
-        expect($process)->toBeResource();
-        
-        $stderr = stream_get_contents($pipes[2]);
-        $stdout = stream_get_contents($pipes[1]);
-        
-        fclose($pipes[0]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-        $exit_code = proc_close($process);
-        
-        return [ $stdout, $stderr, $exit_code ];
-};
-
-
 it( 'accepts intent input on stdin when passed a dash as the input file argument. ', 
-    function() use ( $exec_for_outputs ) {
-        [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
+    function() {
+        [ $stdout, $stderr, $exit_code ] = executeCommand(
             'cat '. __DIR__ .'/../../examples/person1.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         
@@ -37,8 +16,8 @@ it( 'accepts intent input on stdin when passed a dash as the input file argument
   );
     
 it( 'produces intent output on stdout when passed a dash as the input file argument. ', 
-    function() use ( $exec_for_outputs ) {
-        [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
+    function() {
+        [ $stdout, $stderr, $exit_code ] = executeCommand(
             'cat '. __DIR__ .'/../../examples/person1.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         
@@ -49,8 +28,8 @@ it( 'produces intent output on stdout when passed a dash as the input file argum
   );
   
 it( 'produces non-intent output on stderr (only) when passed a dash as the input file argument. ',
-    function() use ( $exec_for_outputs ) {
-        [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
+    function() {
+        [ $stdout, $stderr, $exit_code ] = executeCommand(
             'echo "non-yaml garbage" | '. __DIR__ .'/../../../bin/pull.php - '
           );
         
@@ -62,8 +41,8 @@ it( 'produces non-intent output on stderr (only) when passed a dash as the input
 
 
 it( 'writes extant values to intent resources where those keys already appear in intent. ', 
-    function() use ( $exec_for_outputs ) {
-        [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
+    function() {
+        [ $stdout, $stderr, $exit_code ] = executeCommand(
             'cat '. __DIR__ .'/../../examples/person1.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         expect($exit_code)->toBe(0);
@@ -73,8 +52,8 @@ it( 'writes extant values to intent resources where those keys already appear in
   );
   
 it( 'does not write extant values to intent resources where those resources or keys do not appear in intent. ',
-    function() use ( $exec_for_outputs ) {
-        [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
+    function() {
+        [ $stdout, $stderr, $exit_code ] = executeCommand(
             'cat '. __DIR__ .'/../../examples/person1.somevalues.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         expect($exit_code)->toBe(0);
@@ -84,8 +63,8 @@ it( 'does not write extant values to intent resources where those resources or k
   );
   
 it( 'writes extant values to intent for keys not appearing in intent when the --all-values option is passed. ', 
-    function() use ( $exec_for_outputs ) {
-        [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
+    function() {
+        [ $stdout, $stderr, $exit_code ] = executeCommand(
             'cat '. __DIR__ .'/../../examples/person1.somevalues.intent.yml | '
                 . __DIR__ .'/../../../bin/pull.php --all-values - '
           );
