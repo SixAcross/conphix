@@ -18,14 +18,14 @@ if ( reset($args) === '--all-values' ) {
     $options['--all-values'] = true;
 }   
 
-$confix_file = array_shift($args);
+$intent_file = array_shift($args);
 
 {
 
-    if ( $confix_file === '-' ) { $confix_file = 'php://stdin'; }
+    if ( $intent_file === '-' ) { $intent_file = 'php://stdin'; }
     
-    $confix = Yaml::parse( file_get_contents( $confix_file ) );
-    $resources = $confix['resources'];
+    $intent = Yaml::parse( file_get_contents( $intent_file ) );
+    $resources = $intent['resources'];
 
     $recurse = function( array $extant_array, array &$intent_array ) use ( &$recurse, $options ) {
 
@@ -69,10 +69,10 @@ $confix_file = array_shift($args);
             'headers' => $response->headers->getAll(),
           ];
         
-        $recurse( $extant, $confix['resources'][$resource_index] );
+        $recurse( $extant, $intent['resources'][$resource_index] );
         
     }
     
-    echo Yaml::dump($confix);
+    echo Yaml::dump($intent);
 }
 
