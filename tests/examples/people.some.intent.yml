@@ -1,0 +1,8 @@
+
+resources:
+    - url: http://localhost:2011/api/v1/people/index.json
+      resource_urls:
+          - people[*].join( '', [ 'http://localhost:2011/api/v1/people/', to_string(id), '.json' ] )
+          
+    - url: http://localhost:2011/api/v1/people/2.json
+      note: already existing resource - should not be duplicated nor overwritten
