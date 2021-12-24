@@ -75,7 +75,7 @@ it( 'writes extant values to intent resources where those keys already appear in
 it( 'does not write extant values to intent resources where those resources or keys do not appear in intent. ',
     function() use ( $exec_for_outputs ) {
         [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
-            'cat '. __DIR__ .'/../../examples/person1.nocontent.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
+            'cat '. __DIR__ .'/../../examples/person1.somevalues.intent.yml | '. __DIR__ .'/../../../bin/pull.php - '
           );
         expect($exit_code)->toBe(0);
         expect($stderr   )->toBe('');
@@ -86,11 +86,11 @@ it( 'does not write extant values to intent resources where those resources or k
 it( 'writes extant values to intent for keys not appearing in intent when the --all-values option is passed. ', 
     function() use ( $exec_for_outputs ) {
         [ $stdout, $stderr, $exit_code ] = $exec_for_outputs( 
-            'cat '. __DIR__ .'/../../examples/person1.nocontent.intent.yml | '
+            'cat '. __DIR__ .'/../../examples/person1.somevalues.intent.yml | '
                 . __DIR__ .'/../../../bin/pull.php --all-values - '
           );
         expect($exit_code)->toBe(0);
-        expect($stderr)->toBe('');
+        expect($stderr   )->toBe('');
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
