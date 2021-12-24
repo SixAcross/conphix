@@ -1,6 +1,6 @@
 resources:
     -
-        uri: 'http://localhost:2011/api/v1/people/1.json'
+        url: 'http://localhost:2011/api/v1/people/1.json'
         status: 200
         content:
             values:

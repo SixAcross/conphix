@@ -54,7 +54,7 @@ $intent_file = array_shift($args);
 
     foreach ( $resources as $resource_index => $resource ) {
       
-        $response = Requests::get( $resource['uri'] );
+        $response = Requests::get( $resource['url'] );
         
         $content = json_decode( 
             $response->body,
