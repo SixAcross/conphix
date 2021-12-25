@@ -23,8 +23,8 @@ it( 'produces intent output on stdout when passed a dash as the input file argum
             file_get_contents( __DIR__ .'/../../examples/person1.intent.yml' ),
           );
         
-        expect($exit_code)->toBe(0);
         expect($stderr   )->toBe('');
+        expect($exit_code)->toBe(0);
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
@@ -32,13 +32,13 @@ it( 'produces intent output on stdout when passed a dash as the input file argum
 it( 'produces non-intent output on stderr (only) when passed a dash as the input file argument. ',
     function() {
         [ $stdout, $stderr, $exit_code ] = executeCommand(
-            __DIR__ .'/../../../bin/pull.php - ',
+            __DIR__ .'/../../../bin/confix.php pull - ',
             "non-yaml garbage",
           );
         
-        expect($exit_code )->toBe(255);
         expect($stdout    )->toBe('');
         expect($stderr    )->not()->toBeEmpty();
+        expect($exit_code )->toBe(255);
     }
   );
 
@@ -49,8 +49,9 @@ it( 'writes extant values to intent resources where those keys already appear in
             __DIR__ .'/../../../bin/pull.php - ',
             file_get_contents( __DIR__ .'/../../examples/person1.intent.yml' ),
           );
-        expect($exit_code)->toBe(0);
+          
         expect($stderr   )->toBe('');
+        expect($exit_code)->toBe(0);
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
@@ -61,8 +62,9 @@ it( 'does not write extant values to intent resources where those resources or k
             __DIR__ .'/../../../bin/pull.php - ',
             file_get_contents( __DIR__ .'/../../examples/person1.somevalues.intent.yml' ),
           );
-        expect($exit_code)->toBe(0);
+          
         expect($stderr   )->toBe('');
+        expect($exit_code)->toBe(0);
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
@@ -73,8 +75,9 @@ it( 'writes extant values to intent for keys not appearing in intent when the --
             __DIR__ .'/../../../bin/pull.php --all-values - ',
             file_get_contents( __DIR__ .'/../../examples/person1.somevalues.intent.yml' ),
           );
-        expect($exit_code)->toBe(0);
+          
         expect($stderr   )->toBe('');
+        expect($exit_code)->toBe(0);
         $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
     }
   );
