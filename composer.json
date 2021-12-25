@@ -9,6 +9,11 @@
             "email": "nato@confix.6ax.org"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "": "src/php/"
+        }
+    },
     "require": {
         "rmccue/requests": "^2.0",
         "mtdowling/jmespath.php": "^2.6"

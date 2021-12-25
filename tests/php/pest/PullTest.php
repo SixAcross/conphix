@@ -8,7 +8,7 @@ use Symfony\Component\Yaml\Yaml;
 it( 'accepts intent input on stdin when passed a dash as the input file argument. ', 
     function() {
         [ $stdout, $stderr, $exit_code ] = executeCommand(
-            __DIR__ .'/../../../bin/pull.php - ',
+            __DIR__ .'/../../../bin/confix.php pull - ',
             file_get_contents( __DIR__ .'/../../examples/person1.intent.yml' ),
           );
         
@@ -19,7 +19,7 @@ it( 'accepts intent input on stdin when passed a dash as the input file argument
 it( 'produces intent output on stdout when passed a dash as the input file argument. ', 
     function() {
         [ $stdout, $stderr, $exit_code ] = executeCommand(
-            __DIR__ .'/../../../bin/pull.php - ',
+            __DIR__ .'/../../../bin/confix.php pull - ',
             file_get_contents( __DIR__ .'/../../examples/person1.intent.yml' ),
           );
         
@@ -46,7 +46,7 @@ it( 'produces non-intent output on stderr (only) when passed a dash as the input
 it( 'writes extant values to intent resources where those keys already appear in intent. ', 
     function() {
         [ $stdout, $stderr, $exit_code ] = executeCommand(
-            __DIR__ .'/../../../bin/pull.php - ',
+            __DIR__ .'/../../../bin/confix.php pull - ',
             file_get_contents( __DIR__ .'/../../examples/person1.intent.yml' ),
           );
           
@@ -59,7 +59,7 @@ it( 'writes extant values to intent resources where those keys already appear in
 it( 'does not write extant values to intent resources where those resources or keys do not appear in intent. ',
     function() {
         [ $stdout, $stderr, $exit_code ] = executeCommand(
-            __DIR__ .'/../../../bin/pull.php - ',
+            __DIR__ .'/../../../bin/confix.php pull - ',
             file_get_contents( __DIR__ .'/../../examples/person1.somevalues.intent.yml' ),
           );
           
@@ -72,7 +72,7 @@ it( 'does not write extant values to intent resources where those resources or k
 it( 'writes extant values to intent for keys not appearing in intent when the --all-values option is passed. ', 
     function() {
         [ $stdout, $stderr, $exit_code ] = executeCommand(
-            __DIR__ .'/../../../bin/pull.php --all-values - ',
+            __DIR__ .'/../../../bin/confix.php pull --all-values - ',
             file_get_contents( __DIR__ .'/../../examples/person1.somevalues.intent.yml' ),
           );
           
