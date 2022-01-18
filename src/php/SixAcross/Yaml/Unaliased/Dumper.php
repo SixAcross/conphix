@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace SixAcross\Yaml\Unaliased;
 
+use Throwable;
 use Symfony\Component\Yaml\Dumper as SymfonyDumper;
 
 
@@ -13,23 +14,24 @@ class Dumper extends SymfonyDumper
     
     public function dump(mixed $input, int $inline = 0, int $indent = 0, int $flags = 0): string
     {
-        $tree = $input;
-        $deneutralize = false;
-        if ( ! $this->neutralized ) {
-          
-            $tree = $this->neutralizeParsedTree( $tree );
-            
-            $this->neutralized = true;
-            $deneutralize = true;
+        if ( $this->neutralized ) {
+            return parent::dump( $input, $inline, $indent, $flags );
         }
         
-        $yaml = parent::dump( $tree, $inline, $indent, $flags );
-
-        if ( $deneutralize ) {
-            $yaml = $this->deneutralizeYamlString($yaml);
+        $tree = $input;  
+        
+        $tree = $this->neutralizeParsedTree( $tree );
+        $this->neutralized = true;
+        
+        try {
+            $yaml = parent::dump( $tree, $inline, $indent, $flags );
+        } catch ( Throwable $x ) {
             $this->neutralized = false;
         }
 
+        $yaml = $this->deneutralizeYamlString($yaml);
+        $this->neutralized = false;
+        
         return $yaml;
     }
     

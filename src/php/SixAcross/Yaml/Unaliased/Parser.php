@@ -12,9 +12,10 @@ class Parser extends SymfonyParser
 {
     public function parse(string $value, int $flags = 0): mixed
     {
-        $neutralized  = $this->neutralizeYamlString( $value, $flags );
-        $parsed       = parent::parse( $neutralized, $flags );
-        $tree         = $this->finalizeParsedTree($parsed);
+        $yaml  = $value;
+        $yaml  = $this->neutralizeYamlString( $yaml, $flags );
+        $tree  = parent::parse( $yaml, $flags );
+        $tree  = $this->finalizeParsedTree($tree);
         return $tree;
     }
     
