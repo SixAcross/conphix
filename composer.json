@@ -2,7 +2,7 @@
     "name": "sixacross/confix",
     "description": "An IaC configuration management tool for tracking and applying changes to data in RESTful APIs",
     "type": "project",
-    "license": "GPLv3",
+    "license": "GPL-3.0-only",
     "authors": [
         {
             "name": "Nato Welch",
