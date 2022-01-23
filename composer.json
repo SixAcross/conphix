@@ -16,7 +16,8 @@
     },
     "require": {
         "rmccue/requests": "^2.0",
-        "mtdowling/jmespath.php": "^2.6"
+        "mtdowling/jmespath.php": "^2.6",
+        "sixacross/unaliased_yaml": "dev-main"
     },
     "require-dev": {
         "pestphp/pest": "^1.21",

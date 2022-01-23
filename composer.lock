@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "69fd9c583d39d61f064af9af4fd8ae5b",
+    "content-hash": "acc96288af9f28a7e4d697eea322da15",
     "packages": [
         {
             "name": "mtdowling/jmespath.php",
@@ -147,6 +147,48 @@
                 "source": "https://github.com/WordPress/Requests"
             },
             "time": "2021-11-24T14:20:18+00:00"
+        },
+        {
+            "name": "sixacross/unaliased_yaml",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SixAcross/Unaliased-Yaml.git",
+                "reference": "4cd8743b513b94b547f9f844637cf6eb0cab898d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SixAcross/Unaliased-Yaml/zipball/4cd8743b513b94b547f9f844637cf6eb0cab898d",
+                "reference": "4cd8743b513b94b547f9f844637cf6eb0cab898d",
+                "shasum": ""
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.21",
+                "spatie/pest-plugin-snapshots": "^1.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Nato Welch",
+                    "email": "nato@unaliased.6ax.org"
+                }
+            ],
+            "description": "An wrapper for the Symfony YAML component that ignores anchors, aliases, and merge keys. ",
+            "support": {
+                "issues": "https://github.com/SixAcross/Unaliased-Yaml/issues",
+                "source": "https://github.com/SixAcross/Unaliased-Yaml/tree/main"
+            },
+            "time": "2022-01-23T05:55:12+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -3964,7 +4006,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "sixacross/unaliased_yaml": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
