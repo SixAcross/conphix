@@ -1,7 +1,7 @@
 resources:
     -
         url: 'http://localhost:2011/api/v1/people/1.json'
-        status: 200
+        status_code: 200
         content:
             values:
                 id: 1

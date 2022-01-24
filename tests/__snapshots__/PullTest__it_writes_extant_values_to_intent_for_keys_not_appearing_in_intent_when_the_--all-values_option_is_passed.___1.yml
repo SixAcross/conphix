@@ -5,4 +5,4 @@ resources:
             values:
                 id: 1
                 name: 'Douglas Menendez'
-        status: 200
+        status_code: 200

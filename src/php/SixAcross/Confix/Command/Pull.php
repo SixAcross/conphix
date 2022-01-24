@@ -52,9 +52,9 @@ class Pull extends Intent
               );
             
             $extant = [
-                'status'  => $response->status_code,
-                'content' => $content,
-                'headers' => $response->headers->getAll(),
+                'status_code' => $response->status_code,
+                'content'     => $content,
+                'headers'     => $response->headers->getAll(),
               ];
             
             $this->pullRecursively( $extant, $intent['resources'][$resource_index] );
