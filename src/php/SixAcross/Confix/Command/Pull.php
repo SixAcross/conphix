@@ -11,6 +11,7 @@ use WpOrg\Requests\Requests;
 class Pull extends Intent
 {
     protected static $defaultName = 'pull';
+    protected InputInterface $input;
     
 
     protected function configure()
@@ -31,38 +32,13 @@ class Pull extends Intent
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $options['--all-values'] = $input->getOption('all-values');
+        $this->input = $input;
         $intent_file = $input->getArgument('intent_file');
     
         if ( $intent_file === '-' ) { $intent_file = 'php://stdin'; }
         
         $intent = Yaml::parse( file_get_contents( $intent_file ) );
         $resources = $intent['resources'];
-
-        $recurse = function( array $extant_array, array &$intent_array ) use ( &$recurse, $options ) {
-
-            if ( $options['--all-values'] ) { 
-                $keys = array_keys( $extant_array );
-            } else {
-                $keys = array_keys( $intent_array );
-            }
-            
-            foreach( $keys as $key ) {
-                
-                if ( is_array( $extant_array[$key] ?? null ) and 
-                    (   
-                        is_array( $intent_array[$key] ?? null ) or
-                        $options['--all-values']
-                      )
-                  ) {
-                    return $recurse( $extant_array[$key], $intent_array[$key] );
-                
-                } elseif ( array_key_exists( $key, $extant_array ) ) {
-                    $intent_array[$key] = $extant_array[$key] ?? null;
-                }
-                
-            }
-        };
 
         foreach ( $resources as $resource_index => $resource ) {
           
@@ -81,13 +57,44 @@ class Pull extends Intent
                 'headers' => $response->headers->getAll(),
               ];
             
-            $recurse( $extant, $intent['resources'][$resource_index] );
+            $this->pullRecursively( $extant, $intent['resources'][$resource_index] );
             
         }
         
-        echo Yaml::dump($intent);
+        unset( $this->input );
+        
+        $output->write( Yaml::dump($intent) );
         
         return 0;
 
     }
+    
+    protected function pullRecursively( array $extant_array, array &$intent_array ) 
+    {
+        if ( $this->input->getOption('all-values') ) { 
+            $keys = array_keys( $extant_array );
+        } else {
+            $keys = array_keys( $intent_array );
+        }
+        
+        foreach( $keys as $key ) {
+            
+            #TODO: match?
+            #TODO: json arrays/sequences/lists/non-maps?
+            
+            if ( is_array( $extant_array[$key] ?? null ) and 
+                (   
+                    is_array( $intent_array[$key] ?? null ) or
+                    $this->input->getOption('all-values')
+                  )
+              ) {
+                return $this->pullRecursively( $extant_array[$key], $intent_array[$key] );
+            
+            } elseif ( array_key_exists( $key, $extant_array ) ) {
+                $intent_array[$key] = $extant_array[$key] ?? null;
+            }
+            
+        }
+    }
+    
 }
