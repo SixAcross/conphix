@@ -78,7 +78,12 @@ it( 'writes extant values to intent for keys not appearing in intent when the --
           
         expect($stderr   )->toBe('');
         expect($exit_code)->toBe(0);
-        $this->assertMatchesYamlSnapshot( Yaml::parse($stdout) );
+
+        // normalize a constantly-changing date
+        $tree = Yaml::parse($stdout);
+        $tree['resources'][0]['headers']['date'][0] = 'Mon, 24 Jan 2022 23:55:52 GMT';
+
+        $this->assertMatchesYamlSnapshot($tree);
     }
   );
 

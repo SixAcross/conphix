@@ -6,3 +6,12 @@ resources:
                 id: 1
                 name: 'Douglas Menendez'
         status_code: 200
+        headers:
+            host:
+                - 'localhost:2011'
+            date:
+                - 'Mon, 24 Jan 2022 23:55:52 GMT'
+            content-type:
+                - application/json
+            content-length:
+                - '78'

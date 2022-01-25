@@ -50,8 +50,9 @@ class Pull extends Intent
                 512,
                 JSON_THROW_ON_ERROR
               );
-            
+
             $extant = [
+                'url'         => $response->url,
                 'status_code' => $response->status_code,
                 'content'     => $content,
                 'headers'     => $response->headers->getAll(),
@@ -71,30 +72,36 @@ class Pull extends Intent
     
     protected function pullRecursively( array $extant_array, array &$intent_array ) 
     {
-        if ( $this->input->getOption('all-values') ) { 
-            $keys = array_keys( $extant_array );
-        } else {
-            $keys = array_keys( $intent_array );
-        }
+        $keys = array_unique( array_merge( 
+            array_keys( $intent_array), 
+            array_keys( $extant_array ),
+          ) );
         
-        foreach( $keys as $key ) {
+        foreach ( $keys as $key ) {
             
-            #TODO: match?
-            #TODO: json arrays/sequences/lists/non-maps?
+            // recurse if both intent and extant are compound values
+            if ( 
+                is_array( $extant_array[$key] ?? null ) and 
+                is_array( $intent_array[$key] ?? null )
+              ) 
+            {
+                $this->pullRecursively( $extant_array[$key], $intent_array[$key] );
             
-            if ( is_array( $extant_array[$key] ?? null ) and 
-                (   
-                    is_array( $intent_array[$key] ?? null ) or
-                    $this->input->getOption('all-values')
-                  )
-              ) {
-                return $this->pullRecursively( $extant_array[$key], $intent_array[$key] );
             
-            } elseif ( array_key_exists( $key, $extant_array ) ) {
+            // update values where they exist in intent, or when passed the proper option 
+            } elseif ( 
+                array_key_exists( $key, $intent_array ) or 
+                $this->input->getOption('all-values')
+              ) 
+            {
                 $intent_array[$key] = $extant_array[$key] ?? null;
-            }
             
+                
+            // delete values missing from intent when passed the proper option 
+            } elseif ( $this->input->getOption('all-values') ) {
+                unset( $intent_array[$key] );
+            }
         }
     }
-    
+        
 }
