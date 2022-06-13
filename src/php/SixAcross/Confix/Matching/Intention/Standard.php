@@ -47,7 +47,7 @@ class Standard implements Intention
 	{
 		if ( ! is_array($extant) ) {
 			return new $this->mismatch(
-				"Intended value is an map, but extant value is not. ",
+				"Intended value is a map, but extant value is not. ",
 				$path
 			);
 		}
