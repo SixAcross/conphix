@@ -13,4 +13,9 @@ interface MisMatch
 	public function setNext( ?Mismatch $next ) : MisMatch;
 
 	public function getNext() : ?MisMatch;
+	
+	public function getPath() : array;
+	
+	public function prependPathElement( string | int $key );
+
 }
