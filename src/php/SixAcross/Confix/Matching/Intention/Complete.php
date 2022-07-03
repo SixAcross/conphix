@@ -12,29 +12,6 @@ use SixAcross\Confix\Matching\MisMatch;
  */
 class Complete extends Standard
 {
-	// maps - order does not matter, but all extant keys must exist in intent, and vice versa
-	protected function matchMap( array $intent, $extant ) : ?MisMatch
-	{
-		$mismatches = parent::matchMap( $intent, $extant );
-
-		foreach ( $extant as $key => $value ) {
-
-			$mismatch = null;
-
-			if ( ! array_key_exists( $key, $intent ) ) {
-
-				$mismatch = new $this->mismatch(
-					"Extant key '{$key}' is not in intent. "
-				);
-
-				$mismatches = $mismatches
-					? $mismatches->setNext( $mismatch )
-					: $mismatch;
-			}
-		}
-
-		return $mismatches;
-	}
 
 	// lists - (integer) keys don't matter, but order does. intent and extant lists must be the same length
 	protected function matchList( array $intent, $extant ) : ?MisMatch

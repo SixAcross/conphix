@@ -52,15 +52,21 @@ class Standard implements Intention
 			);
 		}
 
+		$keys = array_unique( array_merge( array_keys($intent), array_keys($extant) ) );
+
 		$mismatches = null;
-		foreach ( $intent as $key => $value ) {
+		foreach ( $keys as $key ) {
 
 			$mismatch = null;
 
 			if ( ! array_key_exists( $key, $extant ) ) {
 				$mismatch = new $this->mismatch(
-					"Intended key '{$key}' is not extant. ",
-					$path
+					"Intended key '{$key}' is not extant. "
+				);
+
+			} elseif ( ! array_key_exists( $key, $intent ) ) {
+				$mismatch = new $this->mismatch(
+					"Extant key '{$key}' is not in intent. "
 				);
 
 			} else {
