@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace SixAcross\Confix\Matching\Intention;
 
-use SixAcross\Confix\Matching\MisMatch;
-use SixAcross\Confix\Matching\MisMatch\General;
+use SixAcross\Confix\Matching\Mismatch;
 use SixAcross\Confix\Matching\Intention;
 
 
@@ -12,25 +11,20 @@ class Standard implements Intention
 {
 	public function __construct(
 		public readonly mixed $intent,
-		public readonly MisMatch $mismatch = new General,
+		public readonly Mismatch\Factory $mismatches = new Mismatch\Factory,
 	) { }
-
-	public static function withMisMatch( MisMatch $mismatch )
-	{
-		return new static( intent: $this->intent, mismatch: $mismatch );
-	}
 
 	public function withIntent( mixed $intent ) : Intention
 	{
-		return new static( intent: $intent, mismatch: $this->mismatch );
+		return new static( intent: $intent, mismatches: $this->mismatches );
 	}
 
-	public function match( $extant ) : ?MisMatch
+	public function match( $extant ) : ?Mismatch
 	{
 		return $this->matchIntent( $this->intent, $extant );
 	}
 
-	protected function matchIntent( $intent, $extant ) : ?MisMatch
+	protected function matchIntent( $intent, $extant ) : ?Mismatch
 	{
 		$matcher = match(true) {
 			is_array($intent) and   array_is_list($intent)  => $this->matchList(...),
@@ -43,12 +37,11 @@ class Standard implements Intention
 	}
 
 	// maps - order doesn't matter, but intent keys must match
-	protected function matchMap( array $intent, $extant ) : ?MisMatch
+	protected function matchMap( array $intent, $extant ) : ?Mismatch
 	{
 		if ( ! is_array($extant) ) {
-			return new $this->mismatch(
-				"Intended value is a map, but extant value is not. ",
-				$path
+			return $this->mismatches->type(
+				"Intended value is a map, but extant value is not. "
 			);
 		}
 
@@ -60,14 +53,16 @@ class Standard implements Intention
 			$mismatch = null;
 
 			if ( ! array_key_exists( $key, $extant ) ) {
-				$mismatch = new $this->mismatch(
-					"Intended key '{$key}' is not extant. "
-				);
+				$mismatch = $this->mismatches->notExtant( sprintf(
+					'Intended key %s is not extant. ',
+					$this->describe($key)
+				) );
 
 			} elseif ( ! array_key_exists( $key, $intent ) ) {
-				$mismatch = new $this->mismatch(
-					"Extant key '{$key}' is not in intent. "
-				);
+				$mismatch = $this->mismatches->notIntended( sprintf(
+					'Extant key %s is not in intent. ',
+					$this->describe($key),
+				) );
 
 			} else {
 				$mismatch = (new static( $intent[$key] ))->match(
@@ -86,10 +81,10 @@ class Standard implements Intention
 	}
 
 	// lists - (integer) keys don't matter, but order does
-	protected function matchList( array $intent, $extant ) : ?MisMatch
+	protected function matchList( array $intent, $extant ) : ?Mismatch
 	{
 		if ( ! ( is_array($extant) and array_is_list($extant) ) ) {
-			return new $this->mismatch(
+			return $this->mismatches->type(
 				"Intended value is a list, but extant value is not. "
 			);
 		}
@@ -125,7 +120,7 @@ class Standard implements Intention
 		}
 	}
 
-	protected function matchObject( object $intent, $extant, array $path = [] ) : ?MisMatch
+	protected function matchObject( object $intent, $extant, array $path = [] ) : ?Mismatch
 	{
 		if ( $intent instanceof Intention ) {
 			return $intent->match( $extant );
@@ -135,10 +130,10 @@ class Standard implements Intention
 		}
 	}
 
-	protected function matchScalar( $intent, $extant, array $path = [] ) : ?MisMatch
+	protected function matchScalar( $intent, $extant, array $path = [] ) : ?Mismatch
 	{
 		if ( $intent != $extant ) {
-			return new $this->mismatch(
+			return $this->mismatches->value(
 				sprintf(
 					'Intended value %s does not match extant %s . ',
 					$this->describe($intent),

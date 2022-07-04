@@ -1,12 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace SixAcross\Confix\Matching\MisMatch;
-
-use SixAcross\Confix\Matching\MisMatch;
+namespace SixAcross\Confix\Matching;
 
 
-class General implements MisMatch
+trait MismatchTrait /* implements Mismatch */
 {
 	public readonly Mismatch $next;
 	protected array $path = [];
@@ -22,7 +20,11 @@ class General implements MisMatch
 
 	protected static function describePath( array $path ) : string
 	{
-		return empty( $path ) ? '' : 'At path '. implode( ' ', $path ) .', ';
+		$exported = [];
+		foreach ( $path as $value ) {
+			$exported[] = var_export( $value, true );
+		}
+		return empty( $path ) ? '' : 'At path '. implode( ' ', $exported ) .', ';
 	}
 
 	public function __toString()
@@ -49,7 +51,7 @@ class General implements MisMatch
 		return $this;
 	}
 
-	public function getNext() : ?MisMatch
+	public function getNext() : ?Mismatch
 	{
 		return $this->next ?? null;
 	}

@@ -4,18 +4,18 @@ declare(strict_types=1);
 namespace SixAcross\Confix\Matching;
 
 
-interface MisMatch
+interface Mismatch
 {
 	public function getMessage() : string;
 
 	public function __toString();
 
-	public function setNext( ?Mismatch $next ) : MisMatch;
+	public function setNext( ?Mismatch $next ) : Mismatch;
 
-	public function getNext() : ?MisMatch;
-	
+	public function getNext() : ?Mismatch;
+
 	public function getPath() : array;
-	
+
 	public function prependPathElement( string | int $key );
 
 }
