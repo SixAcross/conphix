@@ -80,7 +80,7 @@ class Standard implements Intention
 		return $mismatches;
 	}
 
-	// lists - (integer) keys don't matter, but order does
+	// lists - (integer) keys need not match, order does not matter
 	protected function matchList( array $intent, $extant ) : ?Mismatch
 	{
 		if ( ! ( is_array($extant) and array_is_list($extant) ) ) {
@@ -89,35 +89,89 @@ class Standard implements Intention
 			);
 		}
 
-		$matched_count = 0;
-		$intent_count = count($intent);
-		foreach ( $intent as $index => $intent_item ) {
+		$mismatches = null;
+		if ( count($intent) > count($extant) ) {
+			$mismatches = $this->mismatches->notExtant( sprintf(
+				'%s intended value(s) of a list are not extant. ',
+				count($intent) - count($extant),
+			) );
+			return $mismatches;
 
-			$matched = false;
-			while ( ! $matched ) {
+		} elseif ( count($intent) < count($extant) ) {
+			$mismatches = $this->mismatches->notIntended( sprintf(
+				'%s extant value(s) of a list are not in intent. ',
+				count($extant) - count($intent),
+			) );
+		}
 
-				if ( count($extant) <1 ) {
-					$mismatch = new $this->mismatch(
-						"Only {$matched_count} extant item(s) matched {$intent_count} intended item(s) in an ordered list. "
-					);
-					return $mismatch;
-				}
+		$unmatched_intent = $intent;
+		$unmatched_extant = $extant;
 
-				$extant_item = array_shift($extant);
+		// attempt to match in the exact order first
+		$in_order = true;
+		foreach ( $unmatched_intent as $index => $intent_item ) {
 
-				$mismatch = (new static( $intent_item ))->match(
-					$extant_item
-				);
-
-				$matched = ! $mismatch;
-
-				// We ignore mismatches here,
-				//	because the intent might match later extant items...
+			if ( ! array_key_exists( $index, $unmatched_extant ) ) {
+				break;
 			}
 
-			$matched_count++;
+			$mismatch = ( new static( $intent_item ) )
+				->match( $unmatched_extant[ $index ] );
 
+			// in the event of any mismatch, we can't be sure
+			//    whether the mismatch should be a Type or Value Mismatch,
+			//    or a pair of NotIntended + NotExtant Mismatches.
+			// We call it out of order and give up.
+			if ( $mismatch ) {
+				$in_order = false;
+				break;
+
+			} else {
+				unset(
+					$unmatched_intent[$index],
+					$unmatched_extant[$index],
+				);
+			}
 		}
+
+		// now try to match every remaining intent to every extant value, no matter the order.
+		foreach ( $unmatched_intent as $intent_index => $intent_item ) {
+			foreach ( $unmatched_extant as $extant_index => $extant_item ) {
+
+				$mismatch = ( new static( $intent_item ) )->match( $extant_item );
+
+				if ( ! $mismatch ) {
+					unset(
+						$unmatched_intent[$intent_index],
+						$unmatched_extant[$extant_index]
+					);
+				}
+
+			}
+		}
+
+		if ( count($unmatched_intent) >0 && count($unmatched_extant) >0 ) {
+
+			$mismatch = $this->mismatches->listValues(
+				'One or more list values do not match. '
+			);
+
+			$mismatches = $mismatches
+				? $mismatches->setNext( $mismatch )
+				: $mismatch;
+		}
+
+		if ( ! $in_order ) {
+			$mismatch = $this->mismatches->order(
+				'Extant list values are not in the intended order. '
+			);
+
+			$mismatches = $mismatches
+				? $mismatches->setNext( $mismatch )
+				: $mismatch;
+		}
+
+		return $mismatches;
 	}
 
 	protected function matchObject( object $intent, $extant, array $path = [] ) : ?Mismatch
@@ -148,7 +202,7 @@ class Standard implements Intention
 	protected function describe( $value ) : string
 	{
 		return match (true) {
-			is_scalar($value) => (string) $value,
+			is_scalar($value) => var_export( $value, true ),
 			is_object($value) => get_class($value),
 			default => gettype($value),
 		};
