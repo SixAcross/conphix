@@ -33,14 +33,24 @@ class Factory
 		return static::mismatch( Order::class, $message );
 	}
 
-	public static function notExtant( string $message ) : Mismatch\NotExtant
+	public static function valueNotExtant( string $message ) : Mismatch\ValueNotExtant
 	{
-		return static::mismatch( NotExtant::class, $message );
+		return static::mismatch( ValueNotExtant::class, $message );
 	}
 
-	public static function notIntended( string $message ) : Mismatch\NotIntended
+	public static function valuesNotExtant( string $message ) : Mismatch\ValuesNotExtant
 	{
-		return static::mismatch( NotIntended::class, $message );
+		return static::mismatch( ValuesNotExtant::class, $message );
+	}
+
+	public static function valueNotIntended( string $message ) : Mismatch\ValueNotIntended
+	{
+		return static::mismatch( ValueNotIntended::class, $message );
+	}
+
+	public static function valuesNotIntended( string $message ) : Mismatch\ValuesNotIntended
+	{
+		return static::mismatch( ValuesNotIntended::class, $message );
 	}
 
 	public static function mismatch( string $class, string $message ) : Mismatch

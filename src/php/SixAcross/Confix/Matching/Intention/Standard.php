@@ -53,16 +53,16 @@ class Standard implements Intention
 			$mismatch = null;
 
 			if ( ! array_key_exists( $key, $extant ) ) {
-				$mismatch = $this->mismatches->notExtant( sprintf(
+				$mismatch = $this->mismatches->valueNotExtant( sprintf(
 					'Intended key %s is not extant. ',
 					$this->describe($key)
-				) );
+				) )->prependPathElement($key);
 
 			} elseif ( ! array_key_exists( $key, $intent ) ) {
-				$mismatch = $this->mismatches->notIntended( sprintf(
+				$mismatch = $this->mismatches->valueNotIntended( sprintf(
 					'Extant key %s is not in intent. ',
 					$this->describe($key),
-				) );
+				) )->prependPathElement($key);
 
 			} else {
 				$mismatch = (new static( $intent[$key] ))->match(
@@ -91,14 +91,14 @@ class Standard implements Intention
 
 		$mismatches = null;
 		if ( count($intent) > count($extant) ) {
-			$mismatches = $this->mismatches->notExtant( sprintf(
+			$mismatches = $this->mismatches->valuesNotExtant( sprintf(
 				'%s intended value(s) of a list are not extant. ',
 				count($intent) - count($extant),
 			) );
 			return $mismatches;
 
 		} elseif ( count($intent) < count($extant) ) {
-			$mismatches = $this->mismatches->notIntended( sprintf(
+			$mismatches = $this->mismatches->valuesNotIntended( sprintf(
 				'%s extant value(s) of a list are not in intent. ',
 				count($extant) - count($intent),
 			) );

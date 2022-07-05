@@ -4,6 +4,6 @@ declare(strict_types=1);
 namespace SixAcross\Confix\Matching\Mismatch;
 
 
-class NotExtant extends MissingValue
+abstract class NotExtant extends MissingValue
 {
 }
