@@ -29,8 +29,16 @@ trait MismatchTrait /* implements Mismatch */
 
 	public function __toString()
 	{
+		$class_stub = array_reverse(
+			explode( 'Confix\Matching\Mismatch\\', static::class )
+		)[0];
+
 		$result = implode( "\n", array_filter([
-			$this->describePath( $this->path ) . $this->message,
+			implode( ' ', [
+				$this->describePath( $this->path ),
+				 $class_stub .':',
+				$this->message,
+			] ),
 			(string) ( $this->getNext() ?: '' ),
 		]) );
 
