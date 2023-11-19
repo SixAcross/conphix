@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -e
+
+[ -x "$(which yq)" ] || ( ! echo "Cannot find yq (https://github.com/mikefarah/yq)" >&2)
+
+source_file="$1"
+source_path="$2"
+
+usage() {
+    echo "Usage: $0 \$source_file \$source_path " >&2
+    echo "Extracts only a specific path of a json or yaml file" >&2
+    echo "    source_file: a json or yaml file" >&2
+    echo "    source_path: the path within the file you wish to extract." >&2
+    echo "        eg: .services.pgsql" >&2
+}
+
+[ -r "$source_file" ] || ( echo "file $source_file not found" >&2 ; ! usage )
+[ -n "$source_path" ] || ( echo "\$source_path not set" >&2 ; ! usage )
+
+yq ' ( '"$source_path"' ) as $target ireduce( {}; setpath( $target | path ; $target ) )' "$source_file"

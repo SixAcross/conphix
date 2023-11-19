@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+[ -x "$(which yq)" ] || ( ! echo "Cannot find yq (https://github.com/mikefarah/yq)" >&2)
+
+source_file="$1"
+modifier="$2"
+
+usage() {
+    echo "Usage: $0 \$source_file [ \$modifier ] " >&2
+    echo "merges yaml or json from stdin with the source_file, and outputs the result to stdout."
+    echo "    source_file: a json or yaml file" >&2
+    echo "    modifer: optional multiply/merge modifers, +d?nc per yq docs: https://mikefarah.gitbook.io/yq/operators/multiply-merge#merge-flags" >&2
+    echo "        eg: .services.pgsql" >&2
+}
+
+[ -r "$source_file" ] || ( echo "file $source_file not found" >&2 ; ! usage )
+
+yq ' . *'"$modifier"' load("/dev/stdin") ' "$source_file"
